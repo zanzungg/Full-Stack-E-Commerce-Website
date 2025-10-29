@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+*{
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
 @theme {
   --color-primary: #ff5252;
 }
@@ -19,6 +25,6 @@ header .top-strip {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.link::hover{
+.link:hover{
   color: #ff5252;
 }
