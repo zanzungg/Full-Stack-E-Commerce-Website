@@ -1,6 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Search from '../Search';
+import Badge from '@mui/material/Badge';
+import { styled } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
+import { MdOutlineShoppingCart } from "react-icons/md";
+import { IoGitCompareOutline } from "react-icons/io5";
+import { FaRegHeart } from "react-icons/fa6";
+import Tooltip from '@mui/material/Tooltip';
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -3,
+    top: 13,
+    border: `2px solid ${(theme.vars ?? theme).palette.background.paper}`,
+    padding: '0 4px',
+  },
+}));
 
 const Header = () => {
     return (
@@ -38,7 +54,47 @@ const Header = () => {
                     <div className="col2 w-[45%]">
                         <Search/>
                     </div>
-                    <div className="col3 w-[30%]"></div>
+                    <div className="w-[30%] flex items-center">
+                        <ul className="flex items-center justify-end w-full gap-3 pl-10">
+                            <li className="list-none flex items-center gap-1 text-[15px] font-medium">
+                                <Link to="/login" className="link transition">Login</Link>
+                            <span className="text-gray-400">|</span>
+                                <Link to="/register" className="link transition">Register</Link>
+                            </li>
+
+                            <li>
+                                <Tooltip title="Compare">
+                                    <IconButton aria-label="cart">
+                                    <StyledBadge badgeContent={4} color="secondary">
+                                        <IoGitCompareOutline />
+                                    </StyledBadge>
+                                    </IconButton>
+                                </Tooltip>
+                            </li>
+
+                            <li>
+                                <Tooltip title="Wishlist">
+                                    <IconButton aria-label="cart">
+                                    <StyledBadge badgeContent={4} color="secondary">
+                                        <FaRegHeart />
+                                    </StyledBadge>
+                                    </IconButton>
+                                </Tooltip>
+                            </li>
+
+                            <li>
+                                <Tooltip title="Cart">
+                                    <IconButton aria-label="cart">
+                                    <StyledBadge badgeContent={4} color="secondary">
+                                        <MdOutlineShoppingCart />
+                                    </StyledBadge>
+                                    </IconButton>
+                                </Tooltip>
+                            </li>
+
+                            
+                        </ul>
+                    </div>
                 </div>
             </div>
             

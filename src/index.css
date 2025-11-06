@@ -1,30 +1,43 @@
 @import "tailwindcss";
 
-*{
-  margin: 0px;
-  padding: 0px;
-  box-sizing: border-box;
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --spacing: 0.25rem;
+  }
+
+  body {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+  }
+}
+
+@layer components {
+  .container {
+    width: 90%;
+    margin: auto;
+  }
+
+  header .top-strip {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .link:hover {
+    color: #ff5252;
+  }
 }
 
 @theme {
   --color-primary: #ff5252;
 }
 
-body {
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-}
+.MuiBadge-badge{
+  background-color: var(--color-primary) !important;
 
-.container{
-  width: 90%;
-  margin: auto;
-}
-
-header .top-strip {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.link:hover{
-  color: #ff5252;
 }
