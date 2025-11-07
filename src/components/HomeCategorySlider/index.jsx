@@ -17,7 +17,7 @@ const categories = [
 
 const HomeCategorySlider = memo(() => {
   return (
-    <section className="py-6">
+    <section className="homeCategorySlider pt-4 py-8">
       <div className="container mx-auto px-4 relative">
         <Swiper
           modules={[Navigation]}
@@ -40,10 +40,6 @@ const HomeCategorySlider = memo(() => {
                     alt={cat.name}
                     className="h-12 w-12 object-contain"
                     loading="lazy"
-                    onError={(e) =>
-                      (e.target.src =
-                        "https://via.placeholder.com/60?text=Icon")
-                    }
                   />
                 </div>
                 <h3 className="text-sm font-medium text-gray-800 transition-colors group-hover:text-red-500 md:text-[15px]">
