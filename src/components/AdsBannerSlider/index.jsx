@@ -10,11 +10,9 @@ const bannerData = [
   { img: '/banner2.png', link: '/' },
   { img: '/banner3.png', link: '/' },
   { img: '/banner4.png', link: '/' },
-  { img: '/banner4.png', link: '/' },
-  { img: '/banner4.png', link: '/' },
-  { img: '/banner4.png', link: '/' },
-  { img: '/banner4.png', link: '/' },
-  { img: '/banner4.png', link: '/' },
+  { img: '/banner5.webp', link: '/' },
+  { img: '/banner6.webp', link: '/' },
+  { img: '/banner7.png', link: '/' },
 ];
 
 const AdsBannerSlider = ({ items = 3 }) => {

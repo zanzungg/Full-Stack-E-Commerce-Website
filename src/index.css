@@ -46,6 +46,10 @@
   }
 }
 
+.btn-org{
+  background: #ff5252 !important; color: #fff !important; font-weight: 600; font-size: 16px; padding: 7px 20px !important;
+}
+
 .MuiBadge-badge {
   background-color: var(--color-primary) !important;
 }
@@ -142,4 +146,16 @@ nav ul button:hover {
 
 .productsSlider{
   padding: 15px; margin-left: -15px; margin-right: -15px;
+}
+
+footer form input::placeholder{
+  font-size: 14px;
+}
+
+.css-vuhw6e-MuiButtonBase-root-MuiSwitchBase-root-MuiCheckbox-root.Mui-checked, .css-vuhw6e-MuiButtonBase-root-MuiSwitchBase-root-MuiCheckbox-root.MuiCheckbox-indeterminate{
+  color: #ff5252 !important;
+}
+
+.MuiFormControlLabel-label{
+  font-size: 13px !important; color: rgba(0, 0, 0, 0.8);
 }

@@ -6,6 +6,12 @@ import AdsBannerSlider from "../../components/AdsBannerSlider";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import ProductsSlider from "../../components/ProductsSlider";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import BlogItem from "../../components/BlogItem";
+import Footer from "../../components/Footer";
 
 const Home = () => {
     const [value, setValue] = React.useState(0);
@@ -19,7 +25,7 @@ const Home = () => {
             <HomeSlider/>
             <HomeCategorySlider/>
 
-            <section className="bg-white py-8 ">
+            <section className="py-8 bg-white">
                 <div className="container">
                     <div className="flex items-center justify-between">
                         <div className="leftSec w-[40%] pl-5">
@@ -52,7 +58,7 @@ const Home = () => {
                 </div>
             </section>
 
-            <section className="py-5 bg-white">
+            <section className="py-4 pt-2 bg-white">
                 <div className="container">
                     <div className="freeShipping w-[80%] mx-auto py-4 p-4 border-2 border-primary flex items-center 
                     justify-between rounded-md mb-7">
@@ -71,9 +77,101 @@ const Home = () => {
                     <AdsBannerSlider items={4}/>
                 </div>
             </section>
-            <br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br>
+
+
+
+            <section className="py-5 pt-0 bg-white">
+                <div className="container">
+                    <h2 className="font-semibold text-[20px]">Latest Products</h2>
+                    <ProductsSlider items={6} />
+
+                    <AdsBannerSlider items={2} />
+                </div>
+            </section>
+
+            <section className="py-5 pt-0 bg-white">
+                <div className="container">
+                    <h2 className="font-semibold text-[20px]">Featured Products</h2>
+                    <ProductsSlider items={6} />
+
+                    <AdsBannerSlider items={3} />
+                </div>
+            </section>
+
+
+            <section className="py-5 pt-0 bg-white blogSection">
+                <div className="container">
+                    <h2 className="font-semibold text-[20px] mb-4">From The Blog</h2>
+                    <Swiper
+                        modules={[Navigation]}
+                        navigation={{ prevEl: ".blog-prev", nextEl: ".blog-next" }}
+                        spaceBetween={30}
+                        slidesPerView={4}
+                        className="relative"
+                    >
+
+                        <SwiperSlide>
+                            <BlogItem />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                            <BlogItem />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                            <BlogItem />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                            <BlogItem />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                            <BlogItem />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                            <BlogItem />
+                        </SwiperSlide>
+                        {/* Navigation */}
+                        <NavButton direction="prev" className="blog-prev" small />
+                        <NavButton direction="next" className="blog-next" small />
+                    </Swiper>
+                </div>
+            </section>
+
+
+            <Footer />
         </div>
     );
 }
+
+const NavButton = ({ direction, className, small }) => {
+  const isPrev = direction === "prev";
+  return (
+    <button
+      className={`
+        ${className}
+        absolute top-1/2 -translate-y-1/2 z-10
+        ${isPrev ? 'left-4' : 'right-4'}  // ← căn vị trí
+        flex items-center justify-center
+        rounded-full bg-white text-gray-800 shadow-md
+        transition-all hover:bg-red-500 hover:text-white
+        ${small ? 'h-8 w-8' : 'h-11 w-11'}
+      `}
+    >
+      <svg
+        className={`${small ? 'h-4 w-4' : 'h-5 w-5'}`}
+        fill="currentColor"
+        viewBox="0 0 20 20"
+      >
+        <path
+          fillRule="evenodd"
+          d={
+            isPrev
+              ? "M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+              : "M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+          }
+          clipRule="evenodd"
+        />
+      </svg>
+    </button>
+  );
+};
 
 export default Home;
