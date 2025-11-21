@@ -58,6 +58,10 @@ p{
   background: #171717 !important;
 }
 
+.btn-lg{
+  font-size: 18px; padding: 10px 20px !important;
+}
+
 .MuiBadge-badge {
   background-color: var(--color-primary) !important;
 }
