@@ -16,6 +16,7 @@ import { Button } from '@mui/material';
 import ProductDetailsComponent from './components/ProductDetails';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import CartPage from './pages/Cart';
 
 const MyContext = createContext();
 
@@ -52,6 +53,7 @@ function App() {
             <Route path={"/product/:id"} exact={true} element={<ProductDetails/>} />
             <Route path={"/login"} exact={true} element={<Login/>} />
             <Route path={"/register"} exact={true} element={<Register/>} />
+            <Route path={"/cart"} exact={true} element={<CartPage/>} />
           </Routes>
           <Footer />
         </MyContext.Provider>
