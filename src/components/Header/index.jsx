@@ -195,20 +195,20 @@ const Header = () => {
                           <span className="text-[13px]">My Account</span>
                         </MenuItem>
 
-                        <MenuItem onClick={() => handleMenuClick('/orders')}>
-                          <ListItemIcon>
-                            <IoBagCheckOutline fontSize="small" />
-                          </ListItemIcon>
-                          <span className="text-[13px]">Orders</span>
-                        </MenuItem>
-
-                        <MenuItem onClick={() => handleMenuClick('/wishlist')}>
+                        <MenuItem onClick={() => handleMenuClick('/my-wishlist')}>
                           <ListItemIcon>
                             <FaRegHeart fontSize="small" />
                           </ListItemIcon>
                           <span className="text-[13px]">My Wishlist</span>
                         </MenuItem>
 
+                        <MenuItem onClick={() => handleMenuClick('/my-orders')}>
+                          <ListItemIcon>
+                            <IoBagCheckOutline fontSize="small" />
+                          </ListItemIcon>
+                          <span className="text-[13px]">My Orders</span>
+                        </MenuItem>
+                        
                         <MenuItem onClick={() => handleMenuClick('/settings')}>
                           <ListItemIcon>
                             <MdOutlineSettings fontSize="small" />

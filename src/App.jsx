@@ -24,6 +24,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from "./pages/ResetPassword";
 import Checkout from './pages/Checkout';
 import MyAccount from './pages/MyAccount';
+import MyWishList from './pages/MyWishList';
 
 const MyContext = createContext();
 
@@ -93,6 +94,7 @@ function App() {
             <Route path="/reset-password" exact={true} element={<ResetPassword />} />
             <Route path="/checkout" exact={true} element={<Checkout />} />
             <Route path="/my-account" exact={true} element={<MyAccount />} />
+            <Route path="/my-wishlist" exact={true} element={<MyWishList />} />
           </Routes>
           <Footer />
         </MyContext.Provider>

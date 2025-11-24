@@ -1,19 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { MdOutlineCloudUpload } from "react-icons/md";
-import { FaRegUser } from "react-icons/fa";
 import { Button } from '@mui/material';
-import { FaRegHeart } from "react-icons/fa6";
-import { IoBagCheckOutline } from "react-icons/io5";
-import { IoLogOutOutline } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
 import TextField from "@mui/material/TextField";
-import { useNavigate } from 'react-router-dom';
 import { MyContext } from '../../App';
+import AccountSidebar from '../../components/AccountSidebar';
 
 const MyAccount = () => {
     const context = useContext(MyContext);
-    const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState('profile');
     const [isEditMode, setIsEditMode] = useState(false);
     
     const [userInfo, setUserInfo] = useState({
@@ -58,105 +51,15 @@ const MyAccount = () => {
         setIsEditMode(false);
     };
 
-    const handleLogout = () => {
-        context.setIsLogin(false);
-        context.openAlertBox("success", "Logged out successfully!");
-        setTimeout(() => {
-            navigate('/signIn');
-        }, 1000);
-    };
-
     return (
         <section className='py-10 w-full'>
             <div className='container flex gap-5'>
                 {/* Sidebar */}
                 <div className='col1 w-[25%]'>
-                    <div className='card bg-white shadow-md rounded-md overflow-hidden'>
-                        <div className='w-full p-5 flex items-center justify-center flex-col'>
-                            <div className='w-[110px] h-[110px] rounded-full overflow-hidden mb-4 relative group'>
-                                <img 
-                                    src={userInfo.avatar}
-                                    alt="User Avatar"
-                                    className='w-full h-full object-cover' 
-                                />
-
-                                <div className='overlay w-full h-full absolute top-0 left-0
-                                z-50 bg-[rgba(0,0,0,0.7)] flex items-center justify-center cursor-pointer opacity-0 
-                                transition-all group-hover:opacity-100'>
-                                    <MdOutlineCloudUpload className='text-white text-[25px]'/>
-                                    <input 
-                                        type='file' 
-                                        accept="image/*"
-                                        onChange={handleAvatarChange}
-                                        className='absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer'
-                                    />
-                                </div>
-                            </div>
-
-                            <h3 className='font-bold'>{userInfo.fullName}</h3>
-                            <h6 className='text-[13px] font-medium'>{userInfo.email}</h6>
-                        </div>
-
-                        <ul className='list-none pb-5 bg-[#f1f1f1]'>
-                            <li className='w-full'>
-                                <Button 
-                                    className={`w-full text-left! justify-start! py-2! px-5! capitalize! rounded-none! flex items-center gap-2 ${
-                                        activeTab === 'profile' 
-                                        ? 'bg-primary! text-white!' 
-                                        : 'text-[rgba(0,0,0,0.7)]! hover:bg-[rgba(0,0,0,0.05)]!'
-                                    }`}
-                                    onClick={() => setActiveTab('profile')}
-                                >
-                                    <FaRegUser className='text-[17px]'/>
-                                    <span className='font-semibold'>My Profile</span>
-                                </Button>
-                            </li>
-
-                            <li className='w-full'>
-                                <Button 
-                                    className={`w-full text-left! justify-start! py-2! px-5! capitalize! rounded-none! flex items-center gap-2 ${
-                                        activeTab === 'wishlist' 
-                                        ? 'bg-primary! text-white!' 
-                                        : 'text-[rgba(0,0,0,0.7)]! hover:bg-[rgba(0,0,0,0.05)]!'
-                                    }`}
-                                    onClick={() => {
-                                        setActiveTab('wishlist');
-                                        navigate('/wishlist');
-                                    }}
-                                >
-                                    <FaRegHeart className='text-[17px]'/>
-                                    <span className='font-semibold'>My Wishlist</span>
-                                </Button>
-                            </li>
-
-                            <li className='w-full'>
-                                <Button 
-                                    className={`w-full text-left! justify-start! py-2! px-5! capitalize! rounded-none! flex items-center gap-2 ${
-                                        activeTab === 'orders' 
-                                        ? 'bg-primary! text-white!' 
-                                        : 'text-[rgba(0,0,0,0.7)]! hover:bg-[rgba(0,0,0,0.05)]!'
-                                    }`}
-                                    onClick={() => {
-                                        setActiveTab('orders');
-                                        navigate('/orders');
-                                    }}
-                                >
-                                    <IoBagCheckOutline className='text-[20px]'/>
-                                    <span className='font-semibold'>My Orders</span>
-                                </Button>
-                            </li>
-
-                            <li className='w-full'>
-                                <Button 
-                                    className="w-full text-left! justify-start! py-2! px-5! capitalize! text-[rgba(0,0,0,0.7)]! rounded-none! flex items-center gap-2 hover:bg-[rgba(0,0,0,0.05)]!"
-                                    onClick={handleLogout}
-                                >
-                                    <IoLogOutOutline className='text-[20px]'/>
-                                    <span className='font-semibold'>Logout</span>
-                                </Button>
-                            </li>
-                        </ul>
-                    </div>
+                    <AccountSidebar 
+                        userInfo={userInfo} 
+                        onAvatarChange={handleAvatarChange}
+                    />
                 </div>
 
                 {/* Main Content */}
