@@ -17,6 +17,11 @@ import ProductDetailsComponent from './components/ProductDetails';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import CartPage from './pages/Cart';
+import Verify from './pages/Verify';
+
+import toast, { Toaster } from 'react-hot-toast';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from "./pages/ResetPassword";
 
 const MyContext = createContext();
 
@@ -35,11 +40,34 @@ function App() {
     setOpenCartPanel(newOpen);
   };
 
+  const openAlertBox = (status , msg) => {
+    if (status === "success") {
+      toast.success(msg, {
+        duration: 4000,
+        position: 'top-center',
+        style: {
+          background: '#f0fdf4',
+          color: '#166534',
+        },
+      });
+    } else if (status === "error") {
+      toast.error(msg, {
+        duration: 4000,
+        position: 'top-center',
+        style: {
+          background: '#fef2f2',
+          color: '#b91c1c',
+        },
+      });
+    }
+  }
+
   const values = {
     setOpenProductDetailsModal,
     setOpenCartPanel,
     openCartPanel,
-    toggleCartPanel
+    toggleCartPanel,
+    openAlertBox
   }
 
   return (
@@ -49,15 +77,20 @@ function App() {
           <Header/>
           <Routes>
             <Route path={"/"} exact={true} element={<Home/>} />
-            <Route path={"/productListing"} exact={true} element={<ProductListing/>} />
+            <Route path={"/product-listing"} exact={true} element={<ProductListing/>} />
             <Route path={"/product/:id"} exact={true} element={<ProductDetails/>} />
             <Route path={"/login"} exact={true} element={<Login/>} />
             <Route path={"/register"} exact={true} element={<Register/>} />
             <Route path={"/cart"} exact={true} element={<CartPage/>} />
+            <Route path={"/verify"} exact={true} element={<Verify/>} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Routes>
           <Footer />
         </MyContext.Provider>
       </BrowserRouter>
+
+      <Toaster />
 
       <Dialog
         fullWidth={fullWidth}
