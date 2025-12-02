@@ -8,7 +8,7 @@ export const API_ENDPOINTS = {
     REFRESH_TOKEN: '/users/refresh-token',
     VERIFY_EMAIL: '/users/verify-email',
     FORGOT_PASSWORD: '/users/forgot-password',
-    VERIFY_RESET_OTP: '/users/verify-reset-otp',
+    VERIFY_RESET_CODE: '/users/verify-reset-code',
     RESET_PASSWORD: '/users/reset-password',
     
     // User
@@ -42,6 +42,7 @@ export const API_ENDPOINTS = {
 export const STORAGE_KEYS = {
     ACCESS_TOKEN: 'accessToken',
     REFRESH_TOKEN: 'refreshToken',
+    RESET_TOKEN: 'resetToken',
     USER_INFO: 'userInfo',
     CART_ITEMS: 'cartItems',
 };

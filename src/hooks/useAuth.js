@@ -55,7 +55,14 @@ export const useAuth = () => {
             const response = await authContext.register(userData);
             
             context.openAlertBox("success", response.message || "Registration successful! Please verify your email.");
-            navigate('/verify', { state: { email: userData.email } });
+            
+            // Navigate sang verify page với email và type
+            navigate('/verify', { 
+                state: { 
+                    email: userData.email,
+                    type: 'register' 
+                } 
+            });
             
             return response;
         } catch (err) {
@@ -70,6 +77,46 @@ export const useAuth = () => {
                     errorMessage = 'Email already exists';
                 } else if (err.response.status === 400) {
                     errorMessage = 'Invalid data provided';
+                }
+            } else if (err.request) {
+                errorMessage = 'Cannot connect to server. Please check your internet connection.';
+            } else {
+                errorMessage = err.message || 'An unexpected error occurred';
+            }
+            
+            context.openAlertBox("error", errorMessage);
+            throw err;
+        }
+    };
+
+    const verifyEmail = async (email, otp) => {
+        try {
+            const response = await authContext.verifyEmail(email, otp);
+            
+            context.openAlertBox("success", response.message || "Email verified successfully!");
+            
+            // Navigate về login sau khi verify thành công
+            setTimeout(() => {
+                navigate('/login', { replace: true });
+            }, 1500);
+            
+            return response;
+        } catch (err) {
+            let errorMessage = 'Verification failed';
+            
+            if (err.response) {
+                const data = err.response.data;
+                
+                if (data?.message) {
+                    errorMessage = data.message;
+                } else if (err.response.status === 400) {
+                    errorMessage = 'Invalid OTP';
+                } else if (err.response.status === 404) {
+                    errorMessage = 'Email not found';
+                } else if (err.response.status === 410) {
+                    errorMessage = 'OTP has expired. Please request a new one';
+                } else if (err.response.status === 429) {
+                    errorMessage = 'Too many attempts. Please try again later';
                 }
             } else if (err.request) {
                 errorMessage = 'Cannot connect to server. Please check your internet connection.';
@@ -99,10 +146,142 @@ export const useAuth = () => {
         }
     };
 
+    const forgotPassword = async (email) => {
+        try {
+            const response = await authContext.forgotPassword(email);
+            
+            context.openAlertBox("success", response.message || `OTP sent to ${email}`);
+            
+            // Navigate sang verify page
+            setTimeout(() => {
+                navigate('/verify', { 
+                    state: { 
+                        email,
+                        type: 'reset-password'
+                    } 
+                });
+            }, 1000);
+            
+            return response;
+        } catch (err) {
+            let errorMessage = 'Failed to send OTP';
+            
+            if (err.response) {
+                const data = err.response.data;
+                
+                if (data?.message) {
+                    errorMessage = data.message;
+                } else if (err.response.status === 404) {
+                    errorMessage = 'Email not found';
+                } else if (err.response.status === 429) {
+                    errorMessage = 'Too many requests. Please try again later';
+                } else if (err.response.status === 400) {
+                    errorMessage = 'Invalid email address';
+                }
+            } else if (err.request) {
+                errorMessage = 'Cannot connect to server. Please check your internet connection.';
+            } else {
+                errorMessage = err.message || 'An unexpected error occurred';
+            }
+            
+            context.openAlertBox("error", errorMessage);
+            throw err;
+        }
+    };
+
+    const verifyResetCode = async (email, otp) => {
+        try {
+            const response = await authContext.verifyResetCode(email, otp);
+            
+            context.openAlertBox("success", response.message || "OTP verified successfully!");
+
+            // Navigate sang trang reset password với resetToken
+            // Response structure: { message, error, success, resetToken }
+            // resetToken ở top level, không phải trong data
+            const resetToken = response?.resetToken || 
+                                response?.data?.resetToken;
+            navigate('/reset-password', {
+                state: { 
+                    email,
+                    resetToken
+                }
+            });
+
+            return response;
+        } catch (err) {
+            let errorMessage = 'Verification failed';
+            
+            if (err.response) {
+                const data = err.response.data;
+                
+                if (data?.message) {
+                    errorMessage = data.message;
+                } else if (err.response.status === 400) {
+                    errorMessage = 'Invalid OTP';
+                } else if (err.response.status === 410) {
+                    errorMessage = 'OTP has expired. Please request a new one';
+                } else if (err.response.status === 429) {
+                    errorMessage = 'Too many attempts. Please try again later';
+                }
+            } else if (err.request) {
+                errorMessage = 'Cannot connect to server. Please check your internet connection.';
+            } else {
+                errorMessage = err.message || 'An unexpected error occurred';
+            }
+            
+            context.openAlertBox("error", errorMessage);
+            throw err;
+        }
+    };
+
+    const resetPassword = async (resetToken, newPassword) => {
+        try {
+            const response = await authContext.resetPassword(resetToken, newPassword);
+            
+            context.openAlertBox("success", response.message || "Password reset successfully!");
+            
+            // Navigate về login
+            setTimeout(() => {
+                navigate('/login', { replace: true });
+            }, 1500);
+            
+            return response;
+        } catch (err) {
+            let errorMessage = 'Failed to reset password';
+            
+            if (err.response) {
+                const data = err.response.data;
+                
+                if (data?.message) {
+                    errorMessage = data.message;
+                } else if (err.response.status === 400 || err.response.status === 401) {
+                    errorMessage = 'Invalid or expired reset token';
+                    // Redirect về forgot password sau 2s
+                    setTimeout(() => {
+                        navigate('/forgot-password', { replace: true });
+                    }, 2000);
+                } else if (err.response.status === 404) {
+                    errorMessage = 'User not found';
+                }
+            } else if (err.request) {
+                errorMessage = 'Cannot connect to server. Please check your internet connection.';
+            } else {
+                errorMessage = err.message || 'An unexpected error occurred';
+            }
+            
+            context.openAlertBox("error", errorMessage);
+            throw err;
+        }
+    };
+
     return {
         login,
         register,
+        verifyEmail,
         logout,
+        forgotPassword,
+        verifyResetCode,
+        resetPassword,
         loading: authContext.authLoading,
         user: authContext.user,
         isAuthenticated: authContext.isAuthenticated

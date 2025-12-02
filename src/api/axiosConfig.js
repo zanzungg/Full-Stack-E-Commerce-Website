@@ -27,7 +27,7 @@ axiosInstance.interceptors.request.use(
 // Response interceptor
 axiosInstance.interceptors.response.use(
     (response) => {
-        return response.data; // Trả về { message, error, success, data }
+        return response.data;
     },
     async (error) => {        
         const originalRequest = error.config;
@@ -39,7 +39,7 @@ axiosInstance.interceptors.response.use(
                                   originalRequest.url?.includes(API_ENDPOINTS.REFRESH_TOKEN) ||
                                   originalRequest.url?.includes(API_ENDPOINTS.VERIFY_EMAIL) ||
                                   originalRequest.url?.includes(API_ENDPOINTS.FORGOT_PASSWORD) ||
-                                  originalRequest.url?.includes(API_ENDPOINTS.VERIFY_RESET_OTP) ||
+                                  originalRequest.url?.includes(API_ENDPOINTS.VERIFY_RESET_CODE) ||
                                   originalRequest.url?.includes(API_ENDPOINTS.RESET_PASSWORD) ||
                                   originalRequest.url?.includes(API_ENDPOINTS.LOGOUT);
             

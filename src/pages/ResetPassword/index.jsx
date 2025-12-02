@@ -1,15 +1,20 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MyContext } from "../../App";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { useAuth } from "../../hooks/useAuth";
+import { STORAGE_KEYS } from "../../config/constants";
 
 const ResetPassword = () => {
     const context = useContext(MyContext);
     const location = useLocation();
     const navigate = useNavigate();
-    const email = location.state?.email || "";
+    const { resetPassword, loading } = useAuth();
+    
+    const [email, setEmail] = useState('');
+    const [resetToken, setResetToken] = useState('');
 
     const [formFields, setFormFields] = useState({
         password: '',
@@ -18,6 +23,21 @@ const ResetPassword = () => {
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    useEffect(() => {
+        // Lấy email và resetToken từ location state hoặc localStorage
+        const stateEmail = location.state?.email;
+        const stateResetToken = location.state?.resetToken || localStorage.getItem(STORAGE_KEYS.RESET_TOKEN);
+        
+        if (!stateEmail || !stateResetToken) {
+            context.openAlertBox("error", "Invalid reset password link. Please try again.");
+            navigate('/forgot-password', { replace: true });
+            return;
+        }
+        
+        setEmail(stateEmail);
+        setResetToken(stateResetToken);
+    }, [location, navigate, context]);
 
     const onChangeField = (e) => {
         const { name, value } = e.target;
@@ -40,6 +60,10 @@ const ResetPassword = () => {
             newErrors.password = 'Password is required';
         } else if (formFields.password.length < 6) {
             newErrors.password = 'Password must be at least 6 characters';
+        } else if (formFields.password.length > 20) {
+            newErrors.password = 'Password must not exceed 20 characters';
+        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formFields.password)) {
+            newErrors.password = 'Password must contain uppercase, lowercase and number';
         }
         
         if (!formFields.confirmPassword.trim()) {
@@ -52,18 +76,23 @@ const ResetPassword = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleResetPassword = (e) => {
+    const handleResetPassword = async (e) => {
         e.preventDefault();
         
         if (!validateForm()) {
             return;
         }
 
-        // Giả lập reset password
-        context.openAlertBox("success", "Password reset successfully!");
-        setTimeout(() => {
-            navigate('/signIn');
-        }, 1500);
+        try {
+            // useAuth sẽ tự động:
+            // - Clear resetToken từ localStorage
+            // - Show success message
+            // - Navigate về login
+            await resetPassword(resetToken, formFields.password);
+        } catch (error) {
+            console.error('Reset password failed:', error);
+            // Error đã được handle trong useAuth
+        }
     };
 
     return (
@@ -95,12 +124,15 @@ const ResetPassword = () => {
                                 onChange={onChangeField}
                                 error={!!errors.password}
                                 helperText={errors.password}
+                                disabled={loading}
+                                autoComplete="new-password"
                             />
                             <Button 
                                 type="button"
                                 className="absolute! top-2.5 right-2.5 z-50 w-[35px]! h-[35px]! 
                                 min-w-[35px]! rounded-full! text-black!"
                                 onClick={() => setShowPassword(!showPassword)}
+                                disabled={loading}
                             >
                                 {showPassword ? <IoMdEyeOff className="text-[20px] opacity-75"/> : 
                                 <IoMdEye className="text-[20px] opacity-75"/>}
@@ -119,12 +151,15 @@ const ResetPassword = () => {
                                 onChange={onChangeField}
                                 error={!!errors.confirmPassword}
                                 helperText={errors.confirmPassword}
+                                disabled={loading}
+                                autoComplete="new-password"
                             />
                             <Button 
                                 type="button"
                                 className="absolute! top-2.5 right-2.5 z-50 w-[35px]! h-[35px]! 
                                 min-w-[35px]! rounded-full! text-black!"
                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                disabled={loading}
                             >
                                 {showConfirmPassword ? <IoMdEyeOff className="text-[20px] opacity-75"/> : 
                                 <IoMdEye className="text-[20px] opacity-75"/>}
@@ -135,8 +170,14 @@ const ResetPassword = () => {
                             <Button 
                                 type="submit" 
                                 className="btn-org btn-lg w-full"
+                                disabled={loading}
                             >
-                                Reset Password
+                                {loading ? (
+                                    <>
+                                        <CircularProgress size={20} className="mr-2" color="inherit" />
+                                        Resetting...
+                                    </>
+                                ) : 'Reset Password'}
                             </Button>
                         </div>
                     </form>

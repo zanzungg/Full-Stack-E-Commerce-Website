@@ -1,17 +1,18 @@
 import React, { useContext, useState } from "react";
 import TextField from "@mui/material/TextField";
-import { Button } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Button, CircularProgress } from "@mui/material";
+import { Link } from "react-router-dom";
 import { MyContext } from "../../App";
+import { useAuth } from "../../hooks/useAuth";
 
 const ForgotPassword = () => {
     const context = useContext(MyContext);
+    const { forgotPassword, loading } = useAuth();
+    
     const [formFields, setFormFields] = useState({
         email: ''
     });
     const [errors, setErrors] = useState({});
-    
-    const history = useNavigate();
 
     const onChangeField = (e) => {
         const { name, value } = e.target;
@@ -19,7 +20,6 @@ const ForgotPassword = () => {
             ...formFields,
             [name]: value
         });
-        // Clear error khi user bắt đầu nhập
         if (errors[name]) {
             setErrors({
                 ...errors,
@@ -33,7 +33,7 @@ const ForgotPassword = () => {
         return emailRegex.test(email);
     };
 
-    const forgotPassword = (e) => {
+    const handleForgotPassword = async (e) => {
         e.preventDefault();
         
         // Validate
@@ -50,13 +50,15 @@ const ForgotPassword = () => {
             return;
         }
 
-        // Giả lập gửi OTP
-        context.openAlertBox("success", `OTP sent to ${formFields.email}`);
-        
-        // Chuyển đến trang verify sau 1 giây
-        setTimeout(() => {
-            history('/verify', { state: { email: formFields.email } });
-        }, 1000);
+        try {
+            // useAuth sẽ tự động:
+            // - Show success message
+            // - Navigate to verify page
+            await forgotPassword(formFields.email.trim().toLowerCase());
+        } catch (error) {
+            console.error('Forgot password failed:', error);
+            // Error đã được handle trong useAuth
+        }
     };
 
     return (
@@ -75,7 +77,7 @@ const ForgotPassword = () => {
                         Enter your email address and we'll send you an OTP to reset your password.
                     </p>
 
-                    <form onSubmit={forgotPassword} className="w-full">
+                    <form onSubmit={handleForgotPassword} className="w-full">
                         <div className="form-group w-full mb-4">
                             <TextField 
                                 type="email"
@@ -88,6 +90,8 @@ const ForgotPassword = () => {
                                 onChange={onChangeField}
                                 error={!!errors.email}
                                 helperText={errors.email}
+                                disabled={loading}
+                                autoComplete="email"
                             />
                         </div>
 
@@ -95,8 +99,14 @@ const ForgotPassword = () => {
                             <Button 
                                 type="submit" 
                                 className="btn-org btn-lg w-full"
+                                disabled={loading}
                             >
-                                Send OTP
+                                {loading ? (
+                                    <>
+                                        <CircularProgress size={20} className="mr-2" color="inherit" />
+                                        Sending...
+                                    </>
+                                ) : 'Send OTP'}
                             </Button>
                         </div>
 

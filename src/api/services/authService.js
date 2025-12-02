@@ -28,7 +28,14 @@ export const authService = {
         return response;
     },
 
+    verifyResetCode: async (otpData) => {
+        // otpData = { email, otp }
+        const response = await axiosInstance.post(API_ENDPOINTS.VERIFY_RESET_CODE, otpData);
+        return response;
+    },
+
     resetPassword: async (resetData) => {
+        // resetData = { resetToken, newPassword }
         const response = await axiosInstance.post(API_ENDPOINTS.RESET_PASSWORD, resetData);
         return response;
     },

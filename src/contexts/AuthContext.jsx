@@ -89,6 +89,19 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const verifyEmail = async (email, otp) => {
+        try {
+            setAuthLoading(true);
+            const response = await authService.verifyEmail({ email, otp });
+            return response;
+        } catch (error) {
+            console.error('Verify email error:', error);
+            throw error;
+        } finally {
+            setAuthLoading(false);
+        }
+    };
+
     const logout = async () => {
         try {
             setAuthLoading(true);
@@ -106,10 +119,58 @@ export const AuthProvider = ({ children }) => {
             localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
             localStorage.removeItem(STORAGE_KEYS.USER_INFO);
             localStorage.removeItem(STORAGE_KEYS.CART_ITEMS);
+            localStorage.removeItem(STORAGE_KEYS.RESET_TOKEN);
             
             // Reset state
             setUser(null);
             setIsAuthenticated(false);
+            setAuthLoading(false);
+        }
+    };
+
+    const forgotPassword = async (email) => {
+        try {
+            setAuthLoading(true);
+            const response = await authService.forgotPassword(email);
+            return response;
+        } catch (error) {
+            console.error('Forgot password error:', error);
+            throw error;
+        } finally {
+            setAuthLoading(false);
+        }
+    };
+
+    const verifyResetCode = async (email, otp) => {
+        try {
+            setAuthLoading(true);
+            const response = await authService.verifyResetCode({ email, otp });
+            
+            return response;
+        } catch (error) {
+            console.error('Verify reset code error:', error);
+            throw error;
+        } finally {
+            setAuthLoading(false);
+        }
+    };
+
+    const resetPassword = async (resetToken, newPassword) => {
+        try {
+            setAuthLoading(true);
+            const response = await authService.resetPassword({ 
+                resetToken, 
+                newPassword 
+            });
+            
+            // Clear resetToken sau khi thành công
+            localStorage.removeItem(STORAGE_KEYS.RESET_TOKEN);
+            
+            return response;
+        } catch (error) {
+            console.error('Reset password error:', error);
+            throw error;
+        } finally {
             setAuthLoading(false);
         }
     };
@@ -126,7 +187,11 @@ export const AuthProvider = ({ children }) => {
         authLoading,
         login,
         register,
+        verifyEmail,
         logout,
+        forgotPassword,
+        verifyResetCode,
+        resetPassword,
         checkAuth,
         updateUser
     };
