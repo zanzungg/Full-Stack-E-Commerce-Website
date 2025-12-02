@@ -6,7 +6,6 @@ import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { IoGitCompareOutline } from "react-icons/io5";
 import { FaRegUser } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa6";
 import Navigation from "./Navigation";
@@ -21,6 +20,10 @@ import Divider from '@mui/material/Divider';
 import { IoBagCheckOutline } from "react-icons/io5";
 import { IoLogOutOutline } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
+
+// Import useAuth và useAuthContext
+import { useAuth } from "../../hooks/useAuth";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 // Custom Styled Badge
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -37,6 +40,10 @@ const Header = () => {
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const context = useContext(MyContext);
+  
+  // Sử dụng AuthContext và useAuth
+  const { user, isAuthenticated } = useAuthContext();
+  const { logout, loading } = useAuth();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -46,13 +53,9 @@ const Header = () => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     handleClose();
-    context.setIsLogin(false);
-    context.openAlertBox("success", "Logged out successfully!");
-    setTimeout(() => {
-      navigate('/login');
-    }, 1000);
+    await logout();
   };
 
   const handleMenuClick = (path) => {
@@ -114,7 +117,7 @@ const Header = () => {
           <div className="w-[35%] flex items-center">
             <ul className="flex items-center justify-end w-full gap-3 pl-10">
               {
-                context.isLogin === false ?
+                !isAuthenticated ?
                   (
                     <li className="list-none flex items-center gap-1 text-[15px] font-medium">
                       <Link to="/login" className="link transition">
@@ -135,6 +138,7 @@ const Header = () => {
                         aria-controls={open ? 'account-menu' : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
+                        disabled={loading}
                       >
                         <div className="w-10! h-10! min-w-10! rounded-full!
                           bg-[#f1f1f1]! flex items-center justify-center">
@@ -143,10 +147,10 @@ const Header = () => {
 
                         <div className="info flex flex-col">
                           <h4 className="leading-3 text-[14px] text-black mb-0 font-semibold capitalize text-left justify-start">
-                            Rinku Verma
+                            {user?.name || 'User'}
                           </h4>
                           <span className="text-[13px] text-black normal-case text-left justify-start">
-                            example@example.com
+                            {user?.email || 'user@example.com'}
                           </span>
                         </div>
                       </Button>
@@ -218,39 +222,27 @@ const Header = () => {
 
                         <Divider />
 
-                        <MenuItem onClick={handleLogout}>
+                        <MenuItem onClick={handleLogout} disabled={loading}>
                           <ListItemIcon>
                             <IoLogOutOutline fontSize="small" />
                           </ListItemIcon>
-                          <span className="text-[13px]">Logout</span>
+                          <span className="text-[13px]">
+                            {loading ? 'Logging out...' : 'Logout'}
+                          </span>
                         </MenuItem>
                       </Menu>
                     </>
                   )
               }              
 
-              {/* Compare */}
-              <li>
-                <Tooltip title="Compare" arrow>
-                  <IconButton 
-                    aria-label="compare"
-                    onClick={() => navigate('/compare')}
-                  >
-                    <StyledBadge badgeContent={4} color="secondary">
-                      <IoGitCompareOutline size={20} />
-                    </StyledBadge>
-                  </IconButton>
-                </Tooltip>
-              </li>
-
               {/* Wishlist */}
               <li>
                 <Tooltip title="Wishlist" arrow>
                   <IconButton 
                     aria-label="wishlist"
-                    onClick={() => navigate('/wishlist')}
+                    onClick={() => navigate('/my-wishlist')}
                   >
-                    <StyledBadge badgeContent={4} color="secondary">
+                    <StyledBadge badgeContent={0} color="secondary">
                       <FaRegHeart size={20} />
                     </StyledBadge>
                   </IconButton>
@@ -264,7 +256,7 @@ const Header = () => {
                     aria-label="cart" 
                     onClick={() => context.setOpenCartPanel(true)}
                   >
-                    <StyledBadge badgeContent={4} color="secondary">
+                    <StyledBadge badgeContent={0} color="secondary">
                       <MdOutlineShoppingCart size={22} />
                     </StyledBadge>
                   </IconButton>

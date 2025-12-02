@@ -1,22 +1,27 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
-import { IoMdEye } from "react-icons/io";
-import { IoMdEyeOff } from "react-icons/io";
+import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { MyContext } from "../../App";
+import { useAuth } from "../../hooks/useAuth";
 
 const Login = () => {
-    const context = useContext(MyContext);
+    const { login, loading, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [formFields, setFormFields] = useState({
         email: '',
         password: ''
     });
     const [errors, setErrors] = useState({});
-    
-    const history = useNavigate();
+
+    // Redirect nếu đã login
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/', { replace: true });
+        }
+    }, [isAuthenticated, navigate]);
 
     const onChangeField = (e) => {
         const { name, value } = e.target;
@@ -37,28 +42,33 @@ const Login = () => {
         
         if (!formFields.email.trim()) {
             newErrors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(formFields.email)) {
+            newErrors.email = 'Email is invalid';
         }
         
         if (!formFields.password.trim()) {
             newErrors.password = 'Password is required';
+        } else if (formFields.password.length < 6) {
+            newErrors.password = 'Password must be at least 6 characters';
         }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        
+        e.stopPropagation();
+                
         if (!validateForm()) {
             return;
         }
 
-        // Giả lập login
-        context.openAlertBox("success", "Login successful!");
-        setTimeout(() => {
-            history('/');
-        }, 1000);
+        try {
+            await login(formFields);
+        } catch (error) {
+            console.error('Login failed:', error);
+        }
     };
 
     return (
@@ -79,12 +89,14 @@ const Login = () => {
                                 onChange={onChangeField}
                                 error={!!errors.email}
                                 helperText={errors.email}
+                                disabled={loading}
+                                autoComplete="email"
                             />
                         </div>
 
                         <div className="form-group w-full mb-5 relative">
                             <TextField 
-                                type={isShowPassword === false ? 'password' : 'text'}
+                                type={isShowPassword ? 'text' : 'password'}
                                 id="password"
                                 label="Password"
                                 variant="outlined"
@@ -94,18 +106,22 @@ const Login = () => {
                                 onChange={onChangeField}
                                 error={!!errors.password}
                                 helperText={errors.password}
+                                disabled={loading}
+                                autoComplete="current-password"
                             />
 
                             <Button 
                                 type="button" 
                                 className="absolute! top-2.5 right-2.5 z-50 w-[35px]! h-[35px]! 
                                 min-w-[35px]! rounded-full! text-black!" 
-                                onClick={() => setIsShowPassword(!isShowPassword)}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setIsShowPassword(!isShowPassword);
+                                }}
+                                disabled={loading}
                             >
-                                {
-                                    isShowPassword === false ? <IoMdEye className="text-[20px] opacity-75"/> :
-                                    <IoMdEyeOff className="text-[20px] opacity-75"/> 
-                                }
+                                {isShowPassword ? <IoMdEyeOff className="text-[20px] opacity-75"/> : 
+                                <IoMdEye className="text-[20px] opacity-75"/>}
                             </Button>
                         </div> 
 
@@ -117,16 +133,26 @@ const Login = () => {
                         </Link>
 
                         <div className="flex items-center w-full mt-3 mb-3">
-                            <Button type="submit" className="btn-org btn-lg w-full">Login</Button>
+                            <Button 
+                                type="submit" 
+                                className="btn-org btn-lg w-full"
+                                disabled={loading}
+                            >
+                                {loading ? 'Logging in...' : 'Login'}
+                            </Button>
                         </div>
 
                         <p className="text-center">Not Registered?
-                            <Link className="link text-[13px] font-semibold text-primary" to="/register"> Sign Up</Link>
+                            <Link className="link text-[13px] font-semibold text-primary" to="/register"> Register</Link>
                         </p>
 
                         <p className="text-center font-medium">Or continue with social account</p>
 
-                        <Button className="flex gap-3 w-full bg-[#f1f1f1]! btn-lg text-black! font-medium!">
+                        <Button 
+                            type="button"
+                            className="flex gap-3 w-full bg-[#f1f1f1]! btn-lg text-black! font-medium!"
+                            onClick={(e) => e.preventDefault()}
+                        >
                             <FcGoogle className="text-[20px]"/>Login with Google
                         </Button>
                     </form>

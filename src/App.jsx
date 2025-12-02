@@ -27,14 +27,16 @@ import MyAccount from './pages/MyAccount';
 import MyWishList from './pages/MyWishList';
 import MyOrders from './pages/MyOrders';
 
+// Import AuthProvider
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+
 const MyContext = createContext();
 
 function App() {
   const [openProductDetailsModal, setOpenProductDetailsModal] = useState(false);
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState('lg');
-
-  const [isLogin, setIsLogin] = useState(true);
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
 
@@ -73,33 +75,57 @@ function App() {
     setOpenCartPanel,
     openCartPanel,
     toggleCartPanel,
-    openAlertBox,
-    isLogin,
-    setIsLogin
+    openAlertBox
   }
 
   return (
     <>
       <BrowserRouter>
-        <MyContext.Provider value={values}>
-          <Header/>
-          <Routes>
-            <Route path={"/"} exact={true} element={<Home/>} />
-            <Route path={"/product-listing"} exact={true} element={<ProductListing/>} />
-            <Route path={"/product/:id"} exact={true} element={<ProductDetails/>} />
-            <Route path={"/login"} exact={true} element={<Login/>} />
-            <Route path={"/register"} exact={true} element={<Register/>} />
-            <Route path={"/cart"} exact={true} element={<CartPage/>} />
-            <Route path={"/verify"} exact={true} element={<Verify/>} />
-            <Route path="/forgot-password" exact={true} element={<ForgotPassword />} />
-            <Route path="/reset-password" exact={true} element={<ResetPassword />} />
-            <Route path="/checkout" exact={true} element={<Checkout />} />
-            <Route path="/my-account" exact={true} element={<MyAccount />} />
-            <Route path="/my-wishlist" exact={true} element={<MyWishList />} />
-            <Route path="/my-orders" exact={true} element={<MyOrders />} />
-          </Routes>
-          <Footer />
-        </MyContext.Provider>
+        <AuthProvider>
+          <MyContext.Provider value={values}>
+            <Header/>
+            <Routes>
+              <Route path={"/"} exact={true} element={<Home/>} />
+              <Route path={"/product-listing"} exact={true} element={<ProductListing/>} />
+              <Route path={"/product/:id"} exact={true} element={<ProductDetails/>} />
+              
+              {/* Public Routes */}
+              <Route path={"/login"} exact={true} element={<Login/>} />
+              <Route path={"/register"} exact={true} element={<Register/>} />
+              <Route path={"/verify"} exact={true} element={<Verify/>} />
+              <Route path="/forgot-password" exact={true} element={<ForgotPassword />} />
+              <Route path="/reset-password" exact={true} element={<ResetPassword />} />
+              
+              {/* Protected Routes */}
+              <Route path={"/cart"} exact={true} element={
+                <ProtectedRoute>
+                  <CartPage/>
+                </ProtectedRoute>
+              } />
+              <Route path="/checkout" exact={true} element={
+                <ProtectedRoute>
+                  <Checkout />
+                </ProtectedRoute>
+              } />
+              <Route path="/my-account" exact={true} element={
+                <ProtectedRoute>
+                  <MyAccount />
+                </ProtectedRoute>
+              } />
+              <Route path="/my-wishlist" exact={true} element={
+                <ProtectedRoute>
+                  <MyWishList />
+                </ProtectedRoute>
+              } />
+              <Route path="/my-orders" exact={true} element={
+                <ProtectedRoute>
+                  <MyOrders />
+                </ProtectedRoute>
+              } />
+            </Routes>
+            <Footer />
+          </MyContext.Provider>
+        </AuthProvider>
       </BrowserRouter>
 
       <Toaster />

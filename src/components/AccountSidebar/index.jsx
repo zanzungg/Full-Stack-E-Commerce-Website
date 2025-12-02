@@ -28,7 +28,7 @@ const AccountSidebar = ({ userInfo, onAvatarChange }) => {
         context.setIsLogin(false);
         context.openAlertBox("success", "Logged out successfully!");
         setTimeout(() => {
-            navigate('/signIn');
+            navigate('/login');
         }, 1000);
     };
 
